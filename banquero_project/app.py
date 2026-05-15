@@ -1,4 +1,5 @@
 """Servidor Flask para la visualización del Algoritmo del Banquero."""
+import os
 
 from flask import Flask, jsonify, render_template, request
 from banquero import EJEMPLOS, ejecutar_algoritmo_banquero
@@ -61,4 +62,6 @@ def api_ejecutar():
 if __name__ == "__main__":
     print("\nAlgoritmo del Banquero — EIF-212 Sistemas Operativos")
     print("Abre tu navegador en: http://127.0.0.1:5000\n")
-    app.run(debug=True, host="127.0.0.1", port=5000)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
