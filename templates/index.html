@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algoritmo del Banquero — EIF-212</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <div class="logo">B</div>
+    <div>
+      <h1>Algoritmo del Banquero</h1>
+      <span>EIF-212 Sistemas Operativos · Universidad Nacional</span>
+    </div>
+    <span class="badge">Evitación de Interbloqueos</span>
+  </header>
+
+  <main>
+    <aside>
+      <div class="panel">
+        <div class="panel-header"><div class="dot"></div><h2>Configuración</h2></div>
+        <div class="panel-body">
+          <label>Ejemplos predefinidos</label>
+          <div class="examples">
+            <button class="ex-btn" type="button" onclick="cargarEjemplo('clasico')"><strong>📖 Ejemplo clásico</strong><small>5 procesos · 12 instancias · Estado seguro</small></button>
+            <button class="ex-btn" type="button" onclick="cargarEjemplo('simple')"><strong>🟢 Caso simple</strong><small>3 procesos · 10 instancias · Estado seguro</small></button>
+            <button class="ex-btn" type="button" onclick="cargarEjemplo('inseguro')"><strong>🔴 Estado inseguro</strong><small>4 procesos · 10 instancias · Interbloqueo potencial</small></button>
+          </div>
+
+          <hr class="divider">
+
+          <label>Configuración manual</label>
+          <div class="form-group">
+            <label for="num-procesos">Número de procesos</label>
+            <div class="input-row">
+              <input type="number" id="num-procesos" min="1" max="10" value="3">
+              <button id="btn-generar" class="btn btn-secondary inline-btn" type="button" onclick="generarFilas()">Actualizar filas</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="num-instancias">Total de instancias del recurso</label>
+            <input type="number" id="num-instancias" min="1" max="100" value="10">
+          </div>
+
+          <div class="form-group">
+            <div class="proc-header"><span></span><label>Asignado</label><label>Máximo</label></div>
+            <div class="proc-inputs" id="proc-inputs"></div>
+          </div>
+
+          <div id="error-container"></div>
+          <button class="btn btn-primary" type="button" onclick="ejecutar()">▶ Ejecutar Algoritmo</button>
+          <button class="btn btn-secondary" type="button" onclick="limpiar()">↺ Limpiar resultado</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="right-col">
+      <div class="panel" id="panel-tabla">
+        <div class="panel-header"><div class="dot dot-purple"></div><h2>Estado del Sistema</h2></div>
+        <div class="panel-body"><div id="tabla-container"></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="dot dot-green"></div><h2>Resultado</h2></div>
+        <div class="panel-body"><div id="resultado-container"></div></div>
+      </div>
+
+      <div class="panel hidden" id="panel-secuencia">
+        <div class="panel-header"><div class="dot dot-green"></div><h2>Secuencia Segura</h2></div>
+        <div class="panel-body"><div class="seq-viz" id="seq-viz"></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="dot dot-yellow"></div><h2>Traza de Ejecución</h2></div>
+        <div class="panel-body"><div id="pasos-container"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
