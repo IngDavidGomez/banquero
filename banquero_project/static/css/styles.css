@@ -151,6 +151,17 @@ main{
   color:var(--muted);
   font-size:.75rem;
 }
+/* Visual state for disabled / muted controls */
+.muted{opacity:.6}
+button[disabled], .ex-btn.muted{opacity:.6}
+button[disabled]{cursor:not-allowed}
+input[disabled]{
+  opacity:.6;
+  cursor:not-allowed;
+  background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(0,0,0,.02));
+}
+/* make number inputs show disabled cursor when part of inline rows */
+.proc-inputs input[disabled]{background:var(--surface)}
 .form-group{
   margin-bottom:14px;
 }
