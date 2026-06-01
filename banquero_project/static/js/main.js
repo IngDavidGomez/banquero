@@ -5,6 +5,44 @@ const EJEMPLOS = {
 };
 // Ejemplos predefinidos para cargar rápidamente configuraciones en la interfaz
 
+let MODO = 'example'; // 'example' | 'manual'
+
+function setModo(m) {
+  MODO = m;
+  const exBtns = document.querySelectorAll('.ex-btn');
+  const inputProcesos = document.getElementById('num-procesos');
+  const inputInst = document.getElementById('num-instancias');
+  const btnGenerar = document.getElementById('btn-generar');
+
+  if (MODO === 'example') {
+    // Deshabilitar edición manual
+    exBtns.forEach(b => b.classList.remove('muted'));
+    inputProcesos.disabled = true;
+    inputInst.disabled = true;
+    if (btnGenerar) btnGenerar.disabled = true;
+    // Deshabilitar inputs por fila
+    document.querySelectorAll('#proc-inputs input').forEach(i => i.disabled = true);
+    // Marcar visualmente los botones de ejemplo como activos
+    exBtns.forEach(b => b.disabled = false);
+  } else if (MODO === 'manual') {
+    // Modo manual: deshabilitar botones de ejemplo
+    exBtns.forEach(b => b.classList.add('muted'));
+    inputProcesos.disabled = false;
+    inputInst.disabled = false;
+    if (btnGenerar) btnGenerar.disabled = false;
+    document.querySelectorAll('#proc-inputs input').forEach(i => i.disabled = false);
+    exBtns.forEach(b => b.disabled = true);
+  } else if (MODO === 'neutral') {
+    // Ambos modos disponibles: habilitar todo para que el usuario elija
+    exBtns.forEach(b => b.classList.remove('muted'));
+    inputProcesos.disabled = false;
+    inputInst.disabled = false;
+    if (btnGenerar) btnGenerar.disabled = false;
+    document.querySelectorAll('#proc-inputs input').forEach(i => i.disabled = false);
+    exBtns.forEach(b => b.disabled = false);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   generarFilas();
   cargarEjemplo('clasico');
@@ -35,6 +73,9 @@ function generarFilas(n) {
     `;
     container.appendChild(row);
   }
+  // Si se llamó sin argumento, asumimos que el usuario quiere modo manual
+  if (n === undefined) setModo('manual');
+  attachRowListeners();
 }
 // Genera dinámicamente las filas de entrada para cada proceso
 
@@ -46,6 +87,7 @@ function cargarEjemplo(clave) {
   ej.asignado.forEach((v, i) => (document.getElementById(`asignado-${i}`).value = v));
   ej.maximo.forEach((v, i) => (document.getElementById(`maximo-${i}`).value = v));
   limpiar();
+  setModo('example');
 }
 // Carga un ejemplo predefinido en los campos de entrada
 
@@ -172,6 +214,8 @@ function limpiar() {
     panelSecuencia.classList.add('hidden');
   }
   document.getElementById('error-container').innerHTML = '';
+  // Al limpiar, reactivar ambas opciones para que el usuario elija
+  setModo('neutral');
 }
 // Limpia los resultados y deja la interfaz en estado inicial
 
@@ -180,3 +224,78 @@ window.cargarEjemplo = cargarEjemplo;
 window.ejecutar = ejecutar;
 window.limpiar = limpiar;
 // Expone las funciones principales al ámbito global para que puedan ser usadas desde el HTML
+
+// Adjunta listeners a inputs por fila para cambiar al modo manual cuando el usuario edita
+function attachRowListeners() {
+  const numProcesosEl = document.getElementById('num-procesos');
+  const numInstEl = document.getElementById('num-instancias');
+  if (numProcesosEl) numProcesosEl.addEventListener('input', () => setModo('manual'));
+  if (numInstEl) numInstEl.addEventListener('input', () => setModo('manual'));
+
+  document.querySelectorAll('#proc-inputs input').forEach(inp => {
+    // evitar duplicar listeners
+    inp.removeEventListener('input', onRowInput);
+    inp.addEventListener('input', onRowInput);
+  });
+}
+
+function onRowInput() {
+  setModo('manual');
+}
+
+// Inicializar estado visual al cargar
+document.addEventListener('DOMContentLoaded', () => {
+  // Asegurar que los botones de ejemplo disparen setModo('example') además de cargarEjemplo
+  document.querySelectorAll('.ex-btn').forEach(b => b.addEventListener('click', () => setModo('example')));
+  // Attach listeners inicialmente
+  attachRowListeners();
+  // Aplicar modo actual (por defecto cargado al iniciar)
+  setModo(MODO);
+});
+function limpiar() {
+  document.getElementById('tabla-container').innerHTML = placeholder('📊', 'Configura los datos y ejecuta el algoritmo para ver el estado del sistema.');
+  document.getElementById('resultado-container').innerHTML = placeholder('🔒', 'El resultado del análisis de seguridad aparecerá aquí.');
+  document.getElementById('pasos-container').innerHTML = placeholder('📋', 'Aquí verás cada paso del algoritmo de seguridad explicado.');
+  const panelSecuencia = document.getElementById('panel-secuencia');
+  if (panelSecuencia) {
+    panelSecuencia.classList.add('hidden');
+  }
+  document.getElementById('error-container').innerHTML = '';
+  // Al limpiar, reactivar ambas opciones para que el usuario elija
+  setModo('neutral');
+}
+// Limpia los resultados y deja la interfaz en estado inicial
+
+window.generarFilas = generarFilas;
+window.cargarEjemplo = cargarEjemplo;
+window.ejecutar = ejecutar;
+window.limpiar = limpiar;
+// Expone las funciones principales al ámbito global para que puedan ser usadas desde el HTML
+
+// Adjunta listeners a inputs por fila para cambiar al modo manual cuando el usuario edita
+function attachRowListeners() {
+  const numProcesosEl = document.getElementById('num-procesos');
+  const numInstEl = document.getElementById('num-instancias');
+  if (numProcesosEl) numProcesosEl.addEventListener('input', () => setModo('manual'));
+  if (numInstEl) numInstEl.addEventListener('input', () => setModo('manual'));
+
+  document.querySelectorAll('#proc-inputs input').forEach(inp => {
+    // evitar duplicar listeners
+    inp.removeEventListener('input', onRowInput);
+    inp.addEventListener('input', onRowInput);
+  });
+}
+
+function onRowInput() {
+  setModo('manual');
+}
+
+// Inicializar estado visual al cargar
+document.addEventListener('DOMContentLoaded', () => {
+  // Asegurar que los botones de ejemplo disparen setModo('example') además de cargarEjemplo
+  document.querySelectorAll('.ex-btn').forEach(b => b.addEventListener('click', () => setModo('example')));
+  // Attach listeners inicialmente
+  attachRowListeners();
+  // Aplicar modo actual (por defecto cargado al iniciar)
+  setModo(MODO);
+});
